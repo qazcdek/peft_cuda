@@ -244,7 +244,10 @@ class AdaLoraModel(LoraModel):
                     I = torch.eye(*para_cov.size(), out=torch.empty_like(para_cov))
                     I.requires_grad = False
                     num_param += 1
-                    regu_loss += torch.norm(para_cov - I, p="fro")
+                    
+                    #제발 돼라
+                    loss_device_num = str(regu_loss.get_device())
+                    regu_loss += torch.norm(para_cov - I, p="fro").to('cuda:'+loss_device_num)
             if num_param > 0:
                 regu_loss = regu_loss / num_param
             else:
